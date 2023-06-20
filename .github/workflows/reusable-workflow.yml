@@ -2,10 +2,28 @@ name: 'Reusable Workflow Deploy'
 
 on:
     workflow_call:
+        inputs:
+            artifact-name:
+                required: true
+                type: string
+        outputs:
+            result:
+                description: "This is output"
+                value: ${{jobs.reusable_workflow_job.outputs.outcome}}
+
 
 jobs:
     reusable_workflow_job:
+        outputs:
+            outcome: ${{steps.set-result.outputs.step-result}}
         runs-on: ubuntu-latest
         steps:
+            - name: Download Artifactory
+              uses: actions/download-artifact@v3
+              with:
+                name: ${{inputs.artifact-name}}
             - name: Deploy
               run: echo "Deploying..."
+            - name: Get ouput
+              id:  set-result
+              run: echo "step-result=success" >> $GITHUB_OUTPUT

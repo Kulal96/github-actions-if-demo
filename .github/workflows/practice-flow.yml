@@ -68,6 +68,16 @@ jobs:
     deploy:
         needs: build
         uses: ./.github/workflows/reusable-workflow.yml
+        with:
+            artifact-name: dist-files
+    
+    print-deploy-job:
+        needs: deploy
+        runs-on: ubuntu-latest
+        steps:
+            - name: Display output From Reusable workflow
+              run: echo "${{needs.deploy.outputs.result}}"
+
     
     Report:
         needs: [lint,deploy]
@@ -76,4 +86,5 @@ jobs:
         steps:
             - name: Dispplay logs
               run: echo "${{toJson(github)}}"
+           
 
